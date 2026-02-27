@@ -9,14 +9,19 @@ from app.runner import run_all_tests, get_available_lists
 
 app = FastAPI()
 
-# Configurar CORS
+# Configurar CORS - permitir localhost e qualquer origem
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
-    allow_credentials=True,
+    allow_credentials=False,  # Mudado para False quando usa origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.get("/")
+async def root():
+    """Health check endpoint"""
+    return {"status": "ok", "message": "Wowlinette API is running"}
 
 @app.get("/lists")
 async def get_lists():

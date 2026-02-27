@@ -2,6 +2,8 @@
 
 import { useState, useEffect, useRef } from "react"
 
+const API_URL = process.env.NEXT_PRIVATE_BACKEND_URL || "http://localhost:8000"
+
 export default function Home() {
     const [results, setResults] = useState([])
     const [lists, setLists] = useState([])
@@ -15,7 +17,7 @@ export default function Home() {
 
     async function fetchLists() {
         try {
-            const response = await fetch("http://localhost:8000/lists")
+            const response = await fetch(`${API_URL}/lists`)
             const data = await response.json()
             setLists(data.lists || [])
         } catch (error) {
@@ -32,7 +34,7 @@ export default function Home() {
         formData.append("list_name", selectedList)
 
         try {
-            const response = await fetch("http://localhost:10000/wowlinette", {
+            const response = await fetch(`${API_URL}/wowlinette`, {
                 method: "POST",
                 body: formData
             })
