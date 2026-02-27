@@ -1,43 +1,102 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
-export default function Home()
-{
+export default function Home() {
     const [results, setResults] = useState([])
+    const [lists, setLists] = useState([])
+    const [selectedList, setSelectedList] = useState("list_00")
+    const fileInputRef = useRef(null)
 
-    async function handleUpload(event)
-    {
+    // Carregar listas disponíveis ao montar o componente
+    useEffect(() => {
+        fetchLists()
+    }, [])
+
+    async function fetchLists() {
+        try {
+            const response = await fetch("http://localhost:8000/lists")
+            const data = await response.json()
+            setLists(data.lists || [])
+        } catch (error) {
+            console.error("Erro ao carregar listas:", error)
+        }
+    }
+
+    async function handleUpload(event) {
         const file = event.target.files[0]
+        if (!file) return
 
         const formData = new FormData()
         formData.append("file", file)
+        formData.append("list_name", selectedList)
 
-        const response = await fetch("http://localhost:8000/wowlinette", {
-            method: "POST",
-            body: formData
-        })
+        try {
+            const response = await fetch("http://localhost:10000/wowlinette", {
+                method: "POST",
+                body: formData
+            })
 
-        const data = await response.json()
-        setResults(data)
+            const data = await response.json()
+            setResults(data)
+        } catch (error) {
+            console.error("Erro ao enviar arquivo:", error)
+            setResults([{ error: "Erro ao enviar arquivo" }])
+        }
+    }
+
+    function handleRefresh() {
+        setResults([])
+        if (fileInputRef.current) {
+            fileInputRef.current.value = ""
+        }
     }
 
     return (
         <div className="container">
-            <h1>Moulinette C00</h1>
+            <h1>Wowlinette</h1>
 
-            <input type="file" onChange={handleUpload} />
+            <div className="controls">
+                <select value={selectedList} onChange={(e) => setSelectedList(e.target.value)}>
+                    {lists.map((list) => (
+                        <option key={list} value={list}>
+                            {list}
+                        </option>
+                    ))}
+                </select>
+
+                <input 
+                    type="file" 
+                    accept=".zip"
+                    onChange={handleUpload}
+                    ref={fileInputRef}
+                />
+            </div>
 
             <div className="results">
-                {results.map((r, i) => (
+                {results.status && (
+                    <div className={`status-banner ${results.status}`}>
+                        <h2>{results.message}</h2>
+                        {results.passing_exercise && (
+                            <p className="passing-info">Nota de corte: {results.passing_exercise}</p>
+                        )}
+                    </div>
+                )}
+                
+                {results.exercises && results.exercises.map((r, i) => (
                     <p
                         key={i}
-                        className={r.success ? "success" : "fail"}
+                        className={r.success ? "success" : r.error ? "error" : "fail"}
                     >
-                        {r.exercise} → {r.success ? "✔ OK" : "✘ FAIL"}
+                        {r.error ? `❌ ${r.error}` : `${r.exercise} → ${r.success ? "✔ OK" : "✘ FAIL"}`}
                     </p>
                 ))}
             </div>
-        </div>
-    )
-}
+
+            {results.length > 0 || results.status ? (
+                <button onClick={handleRefresh} className="refresh-btn">
+                    🔄 Nova Avaliação
+                </button>
+            ) : null}
+   </div>
+)}

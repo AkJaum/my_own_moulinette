@@ -1,6 +1,9 @@
 from app.compiler import compile_c, run_program
 import os
 
+# Nota de corte: precisa passar até ex05 para ser aprovado
+PASSING_EXERCISE = "ex04"
+
 
 def test_ex00(base):
     file_path = os.path.join(base, "ex00/ft_putchar.c")
@@ -108,6 +111,7 @@ def test_ex04(base):
     abs_file_path = os.path.abspath(file_path)
 
     main_code = f"""
+#include <stdlib.h>
 #include "{abs_file_path}"
 
 int main(int argc, char **argv)
@@ -140,7 +144,6 @@ def test_ex05(base):
     abs_file_path = os.path.abspath(file_path)
 
     main_code = f"""
-
 #include "{abs_file_path}"
 int main(void)
 {{
@@ -172,7 +175,6 @@ def test_ex06(base):
     abs_file_path = os.path.abspath(file_path)
 
     main_code = f"""
-
 #include "{abs_file_path}"
 int main(void)
 {{
@@ -203,7 +205,6 @@ def test_ex07(base):
     abs_file_path = os.path.abspath(file_path)
 
     main_code = f"""
-
 #include "{abs_file_path}"
 
 int main(int argc, char **argv)
@@ -236,7 +237,6 @@ def test_ex08(base):
     abs_file_path = os.path.abspath(file_path)
 
     main_code = f"""
-
 #include "{abs_file_path}"
 
 int main(int argc, char **argv)
