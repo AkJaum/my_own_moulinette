@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from "react"
 
-const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:10000"
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL?.replace(/\/$/, "")
 
 export default function Home() {
-    const [results, setResults] = useState([])
+    const [results, setResults] = useState(null)
     const [lists, setLists] = useState([])
     const [selectedList, setSelectedList] = useState("list_00")
     const fileInputRef = useRef(null)
@@ -16,8 +16,17 @@ export default function Home() {
     }, [])
 
     async function fetchLists() {
+        if (!API_URL) {
+            console.error("NEXT_PUBLIC_BACKEND_URL não está definida")
+            return
+        }
+
         try {
             const response = await fetch(`${API_URL}/lists`)
+            if (!response.ok) {
+                throw new Error(`Falha ao carregar listas (HTTP ${response.status})`)
+            }
+
             const data = await response.json()
             setLists(data.lists || [])
         } catch (error) {
@@ -29,6 +38,15 @@ export default function Home() {
         const file = event.target.files[0]
         if (!file) return
 
+        if (!API_URL) {
+            setResults({
+                status: "error",
+                message: "URL da API não configurada no frontend",
+                exercises: []
+            })
+            return
+        }
+
         const formData = new FormData()
         formData.append("file", file)
         formData.append("list_name", selectedList)
@@ -39,16 +57,25 @@ export default function Home() {
                 body: formData
             })
 
-            const data = await response.json()
+            const data = await response.json().catch(() => ({}))
+
+            if (!response.ok) {
+                throw new Error(data.error || data.detail || `Falha na API (HTTP ${response.status})`)
+            }
+
             setResults(data)
         } catch (error) {
             console.error("Erro ao enviar arquivo:", error)
-            setResults([{ error: "Erro ao enviar arquivo" }])
+            setResults({
+                status: "error",
+                message: error.message || "Erro ao enviar arquivo",
+                exercises: []
+            })
         }
     }
 
     function handleRefresh() {
-        setResults([])
+        setResults(null)
         if (fileInputRef.current) {
             fileInputRef.current.value = ""
         }
@@ -76,16 +103,16 @@ export default function Home() {
             </div>
 
             <div className="results">
-                {results.status && (
+                {results?.status && (
                     <div className={`status-banner ${results.status}`}>
                         <h2>{results.message}</h2>
-                        {results.passing_exercise && (
+                        {results?.passing_exercise && (
                             <p className="passing-info">Nota de corte: {results.passing_exercise}</p>
                         )}
                     </div>
                 )}
                 
-                {results.exercises && results.exercises.map((r, i) => (
+                {(results?.exercises || []).map((r, i) => (
                     <p
                         key={i}
                         className={r.success ? "success" : r.error ? "error" : "fail"}
@@ -95,7 +122,7 @@ export default function Home() {
                 ))}
             </div>
 
-            {results.length > 0 || results.status ? (
+            {results ? (
                 <button onClick={handleRefresh} className="refresh-btn">
                     🔄 Nova Avaliação
                 </button>
