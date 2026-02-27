@@ -12,7 +12,7 @@ app = FastAPI()
 # Configurar CORS - permitir localhost e qualquer origem
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Permitir localhost e qualquer origem
+    allow_origins=["http://localhost:3000", "https://my-own-moulinette.vercel.app/"],  # Permitir localhost e qualquer origem
     allow_credentials=True,  # Mudado para False quando usa origins=["*"]
     allow_methods=["*"],
     allow_headers=["*"],
