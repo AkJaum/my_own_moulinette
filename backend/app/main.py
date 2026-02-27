@@ -9,11 +9,16 @@ from app.runner import run_all_tests, get_available_lists
 
 app = FastAPI()
 
-# Configurar CORS - permitir localhost e qualquer origem
+# Configurar CORS para localhost e domínios da Vercel
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://my-own-moulinette.vercel.app/"],  # Permitir localhost e qualquer origem
-    allow_credentials=True,  # Mudado para False quando usa origins=["*"]
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://my-own-moulinette.vercel.app",
+    ],
+    allow_origin_regex=r"https://.*\.vercel\.app",
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
