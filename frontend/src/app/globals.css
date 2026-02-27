@@ -1,0 +1,20 @@
+body {
+    background: #111;
+    color: white;
+    font-family: monospace;
+    display: flex;
+    justify-content: center;
+    padding-top: 100px;
+}
+
+.container {
+    text-align: center;
+}
+
+.success {
+    color: #00ff88;
+}
+
+.fail {
+    color: #ff4444;
+}
