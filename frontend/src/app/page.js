@@ -100,8 +100,11 @@ export default function Home() {
 
     return (
         <div className="container">
-            <h1 className="info">i</h1>
-            <h1 className="header-text">Wowlinette</h1>
+            <img 
+                src="/wow_logo.png" 
+                alt="Wowlinette" 
+                className="logo">
+            </img>
 
             <div className="controls">
                 <div>
@@ -173,12 +176,14 @@ export default function Home() {
                 )}
                 
                 {!showModal && !loading && (results?.exercises || []).map((r, i) => (
-                    <p
-                        key={i}
-                        className={r.success ? "success" : r.error ? "error" : "fail"}
-                    >
-                        {r.error ? `❌ ${r.error}` : `${r.exercise} → ${r.success ? "✔ OK" : "✘ FAIL"}`}
-                    </p>
+                    <div className="results-item" key={i}>
+                        <p
+                            key={i}
+                            className={r.success ? "success" : r.error ? "error" : "fail"}
+                        >
+                            {r.error ? `❌ ${r.error}` : `${r.exercise} → ${r.success ? "✔ OK" : "✘ FAIL"}`}
+                        </p>
+                    </div>
                 ))}
             </div>
 

@@ -1,5 +1,5 @@
 body {
-    background: #111;
+    background: #0f0f0f;
     color: white;
     font-family: monospace;
     display: flex;
@@ -131,7 +131,7 @@ body {
 
 .modal-content p {
     margin: 10px 0;
-    text-align: left;
+    text-align: center;
 }
 
 .status-banner {
