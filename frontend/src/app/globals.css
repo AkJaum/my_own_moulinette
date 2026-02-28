@@ -11,10 +11,176 @@ body {
     text-align: center;
 }
 
+.controls {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    margin: 30px 0;
+}
+
+.controls > div {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.controls p {
+    margin: 0;
+    color: #00ff88;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: bold;
+}
+
+.controls select {
+    padding: 12px 20px;
+    background: #222;
+    color: #fff;
+    border: 2px solid #00ff88;
+    border-radius: 5px;
+    font-family: monospace;
+    font-size: 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    outline: none;
+    min-width: 200px;
+}
+
+.controls select:hover {
+    background: #2a2a2a;
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.controls select:focus {
+    box-shadow: 0 0 15px rgba(0, 255, 136, 0.5);
+}
+
+.controls select option {
+    background: #222;
+    color: #fff;
+    padding: 10px;
+}
+
 .success {
     color: #00ff88;
 }
 
 .fail {
     color: #ff4444;
+}
+
+.loading {
+    padding: 20px;
+    color: #ffd700;
+    font-size: 18px;
+}
+
+.loading p {
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+.file-btn {
+    padding: 10px 20px;
+    background: #222;
+    color: #00ff88;
+    border: 2px solid #00ff88;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.file-btn:hover {
+    background: #00ff88;
+    color: #111;
+    box-shadow: 0 0 10px #00ff88;
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: #222;
+    border: 2px solid #00ff88;
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 600px;
+    max-height: 70vh;
+    overflow-y: auto;
+    box-shadow: 0 0 20px #00ff88;
+    position: relative;
+}
+
+.modal-content p {
+    margin: 10px 0;
+    text-align: left;
+}
+
+.status-banner {
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.status-banner.approved {
+    background: #1a3a1a;
+    border-left: 5px solid #00ff88;
+}
+
+.status-banner.failed {
+    background: #3a1a1a;
+    border-left: 5px solid #ff4444;
+}
+
+.status-banner.error {
+    background: #3a1a1a;
+    border-left: 5px solid #ffd700;
+}
+
+.status-banner h2 {
+    margin: 0 0 10px 0;
+}
+
+.passing-info {
+    font-size: 14px;
+    opacity: 0.9;
+    margin: 5px 0 0 0;
+}
+
+.modal-close-btn {
+    width: 100%;
+    padding: 12px;
+    margin-top: 20px;
+    background: #00ff88;
+    color: #111;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: monospace;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.modal-close-btn:hover {
+    background: #00dd77;
+    box-shadow: 0 0 10px #00ff88;
 }

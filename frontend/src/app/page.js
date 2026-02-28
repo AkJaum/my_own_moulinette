@@ -8,6 +8,9 @@ export default function Home() {
     const [results, setResults] = useState(null)
     const [lists, setLists] = useState([])
     const [selectedList, setSelectedList] = useState("list_00")
+    const [loading, setLoading] = useState(false)
+    const [fileName, setFileName] = useState("Upload")
+    const [showModal, setShowModal] = useState(false)
     const fileInputRef = useRef(null)
 
     // Carregar listas disponíveis ao montar o componente
@@ -38,6 +41,8 @@ export default function Home() {
         const file = event.target.files[0]
         if (!file) return
 
+        setFileName(file.name)
+
         if (!API_URL) {
             setResults({
                 status: "error",
@@ -52,6 +57,10 @@ export default function Home() {
         formData.append("list_name", selectedList)
 
         try {
+            setLoading(true)
+            setResults(null)
+            setShowModal(true)
+            
             const response = await fetch(`${API_URL}/wowlinette`, {
                 method: "POST",
                 body: formData
@@ -71,39 +80,90 @@ export default function Home() {
                 message: error.message || "Erro ao enviar arquivo",
                 exercises: []
             })
+        } finally {
+            setLoading(false)
         }
     }
 
     function handleRefresh() {
         setResults(null)
+        setFileName("Upload")
+        setShowModal(false)
         if (fileInputRef.current) {
             fileInputRef.current.value = ""
         }
     }
 
+    function handleButtonClick() {
+        fileInputRef.current?.click()
+    }
+
     return (
         <div className="container">
-            <h1>Wowlinette</h1>
+            <h1 className="info">i</h1>
+            <h1 className="header-text">Wowlinette</h1>
 
             <div className="controls">
-                <select value={selectedList} onChange={(e) => setSelectedList(e.target.value)}>
-                    {lists.map((list) => (
-                        <option key={list} value={list}>
-                            {list}
-                        </option>
-                    ))}
-                </select>
+                <div>
+                    <p>Selecione a lista a ser avaliada</p>
+                    <select value={selectedList} onChange={(e) => setSelectedList(e.target.value)}>
+                        {lists.map((list) => (
+                            <option key={list} value={list}>
+                                {list}
+                            </option>
+                        ))}
+                    </select>
+                </div>
 
+                <button onClick={handleButtonClick} className="file-btn">
+                    {fileName}
+                </button>
                 <input 
                     type="file" 
                     accept=".zip"
                     onChange={handleUpload}
                     ref={fileInputRef}
+                    style={{ display: "none" }}
                 />
             </div>
+{showModal && (
+                <div className="modal-overlay" onClick={handleRefresh}>
+                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                        {loading && (
+                            <div className="loading">
+                                <p>⏳ Avaliando seu código...</p>
+                            </div>
+                        )}
+                        
+                        {!loading && results?.status && (
+                            <>
+                                <div className={`status-banner ${results.status}`}>
+                                    <h2>{results.message}</h2>
+                                    {results?.passing_exercise && (
+                                        <p className="passing-info">Nota de corte: {results.passing_exercise}</p>
+                                    )}
+                                </div>
+                                
+                                {(results?.exercises || []).map((r, i) => (
+                                    <p
+                                        key={i}
+                                        className={r.success ? "success" : r.error ? "error" : "fail"}
+                                    >
+                                        {r.error ? `❌ ${r.error}` : `${r.exercise} → ${r.success ? "✔ OK" : "✘ FAIL"}`}
+                                    </p>
+                                ))}
+                                
+                                <button onClick={handleRefresh} className="modal-close-btn">
+                                    ✕ Fechar
+                                </button>
+                            </>
+                        )}
+                    </div>
+                </div>
+            )}
 
             <div className="results">
-                {results?.status && (
+                {!showModal && !loading && results?.status && (
                     <div className={`status-banner ${results.status}`}>
                         <h2>{results.message}</h2>
                         {results?.passing_exercise && (
@@ -112,7 +172,7 @@ export default function Home() {
                     </div>
                 )}
                 
-                {(results?.exercises || []).map((r, i) => (
+                {!showModal && !loading && (results?.exercises || []).map((r, i) => (
                     <p
                         key={i}
                         className={r.success ? "success" : r.error ? "error" : "fail"}
@@ -122,10 +182,11 @@ export default function Home() {
                 ))}
             </div>
 
-            {results ? (
+            {results && !loading && !showModal ? (
                 <button onClick={handleRefresh} className="refresh-btn">
                     🔄 Nova Avaliação
                 </button>
             ) : null}
-   </div>
-)}
+        </div>
+    )
+}

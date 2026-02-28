@@ -3,7 +3,7 @@ version: "3.9"
 services:
   backend:
     build: ./backend
-    container_name: moulinette_backend
+    container_name: wowlinette_backend
     ports:
       - "8000:8000"
     volumes:
@@ -12,7 +12,7 @@ services:
 
   frontend:
     build: ./frontend
-    container_name: moulinette_frontend
+    container_name: wowlinette_frontend
     ports:
       - "3000:3000"
     command: npm run dev
